@@ -24,16 +24,23 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@hookform/resolvers": "^5.2.1",
     "@mui/icons-material": "^7.3.1",
     "@mui/material": "^7.3.1",
+    "@mui/x-data-grid": "^8.10.0",
+    "@mui/x-date-pickers": "^8.10.0",
     "axios": "^1.11.0",
     "compression": "^1.8.1",
+    "dayjs": "^1.11.13",
     "express": "^5.1.0",
+    "notistack": "^3.0.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-hook-form": "^7.62.0",
     "react-router-dom": "^7.8.0",
     "react-scripts": "^5.0.1",
-    "recharts": "^3.1.2"
+    "recharts": "^3.1.2",
+    "yup": "^1.7.0"
   },
   "browserslist": {
     "production": [

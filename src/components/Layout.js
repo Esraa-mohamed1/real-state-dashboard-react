@@ -13,6 +13,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PaidIcon from '@mui/icons-material/Paid';
@@ -22,6 +23,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useColorMode } from './ThemeProvider';
+import { useAuth } from '../context/AuthContext';
 
 const drawerWidth = 240;
 
@@ -38,6 +40,7 @@ export default function Layout() {
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const { mode, toggleColorMode } = useColorMode();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const drawerContent = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -88,13 +91,27 @@ export default function Layout() {
             Real Estate Financial Dashboard
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
+          {isAuthenticated && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mr: 2 }}>
+              <Typography variant="body2">{user?.name}</Typography>
+              {user?.isAdmin && (
+                <Typography variant="caption" sx={{ bgcolor: 'warning.main', color: 'warning.contrastText', px: 1, borderRadius: 1 }}>
+                  Admin
+                </Typography>
+              )}
+            </Box>
+          )}
+          {isAuthenticated ? (
+            <Button color="inherit" onClick={logout}>Logout</Button>
+          ) : (
+            <Button color="inherit" component={Link} to="/login">Login</Button>
+          )}
           <IconButton onClick={toggleColorMode} color="inherit">
             {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
         </Toolbar>
       </AppBar>
 
-      {/* Sidebar */}
       {isMdUp ? (
         <Drawer
           variant="permanent"
@@ -119,7 +136,6 @@ export default function Layout() {
         </Drawer>
       )}
 
-      {/* Main content */}
       <Box component="main" sx={{ flexGrow: 1, p: 3, width: { md: `calc(100% - ${drawerWidth}px)` } }}>
         <Toolbar />
         <Outlet />
