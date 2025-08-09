@@ -56,9 +56,27 @@ export default function Layout({ children }) {
   const drawer = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Logo Section */}
-    
+      <Box sx={{ 
+        p: 3, 
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+        color: 'white'
+      }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ width: 48, height: 48, borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(251, 191, 36, 0.3)' }}>
+            <img src={logoSrc} alt="App Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </Box>
+          <Typography variant="h6" sx={{ fontWeight: 700, letterSpacing: '0.5px' }}>
+            Crystal Power
+          </Typography>
+        </Box>
+        <Typography variant="caption" sx={{ mt: 1, opacity: 0.9, fontWeight: 500 }}>
+          Financial Management
+        </Typography>
+      </Box>
+      
       {/* Navigation Menu */}
-      <List sx={{ flexGrow: 1, pt: 2, overflowY: 'auto', minHeight: 0 }}>
+      <List sx={{ flexGrow: 1, pt: 2, overflowY: 'auto', minHeight: 0, WebkitOverflowScrolling: 'touch', scrollbarWidth: 'thin' }}>
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (

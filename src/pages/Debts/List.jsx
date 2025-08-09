@@ -84,11 +84,16 @@ export default function DebtsList() {
   const handleSubmit = async (values) => {
     try {
       const id = editing?._id || editing?.id;
+      const payload = {
+        ...values,
+        amount: Number(values.amount),
+        date: values?.date ? new Date(values.date).toISOString() : undefined,
+      };
       if (id) {
-        await debtService.update(id, values);
+        await debtService.update(id, payload);
         enqueueSnackbar('Debt updated', { variant: 'success' });
       } else {
-        await debtService.create(values);
+        await debtService.create(payload);
         enqueueSnackbar('Debt created', { variant: 'success' });
       }
       setOpen(false);
@@ -121,13 +126,6 @@ export default function DebtsList() {
             </Paper>
           )}
         </Grid>
-        <Grid item xs={12} md={4}>
-          {loading ? (
-            <Skeleton variant="rounded" height={420} />
-          ) : (
-            <PieChartCard title="Debt Breakdown" data={breakdown} nameKey="name" valueKey="value" />
-          )}
-        </Grid>
         <Grid item xs={12} md={6}>
           {loading ? (
             <Skeleton variant="rounded" height={96} />
@@ -140,6 +138,13 @@ export default function DebtsList() {
             <Skeleton variant="rounded" height={96} />
           ) : (
             <SummaryCard title="Settled" value={formatCurrency(summary?.settled)} color="success" icon={<CheckCircleIcon />} />
+          )}
+        </Grid>
+        <Grid item xs={12}>
+          {loading ? (
+            <Skeleton variant="rounded" height={420} />
+          ) : (
+            <PieChartCard title="Debt Breakdown" data={breakdown} nameKey="name" valueKey="value" />
           )}
         </Grid>
       </Grid>

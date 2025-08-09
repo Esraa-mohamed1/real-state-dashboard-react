@@ -76,11 +76,16 @@ export default function PaymentsList() {
   const handleSubmit = async (values) => {
     try {
       const id = editing?._id || editing?.id;
+      const payload = {
+        ...values,
+        amount: Number(values.amount),
+        date: values?.date ? new Date(values.date).toISOString() : undefined,
+      };
       if (id) {
-        await paymentService.update(id, values);
+        await paymentService.update(id, payload);
         enqueueSnackbar('Payment updated', { variant: 'success' });
       } else {
-        await paymentService.create(values);
+        await paymentService.create(payload);
         enqueueSnackbar('Payment created', { variant: 'success' });
       }
       setOpen(false);
