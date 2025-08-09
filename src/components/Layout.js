@@ -66,9 +66,7 @@ export default function Layout({ children }) {
           <Box sx={{ width: 48, height: 48, borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(251, 191, 36, 0.3)' }}>
             <img src={logoSrc} alt="App Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </Box>
-          <Typography variant="h6" sx={{ fontWeight: 700, letterSpacing: '0.5px' }}>
-            Crystal Power
-          </Typography>
+     
         </Box>
         <Typography variant="caption" sx={{ mt: 1, opacity: 0.9, fontWeight: 500 }}>
           Financial Management
