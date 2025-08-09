@@ -61,7 +61,7 @@ export default function PropertiesList() {
       renderCell: (params) => (
         <Box>
           <IconButton size="small" onClick={() => { setEditing(params.row); setOpen(true); }}><EditIcon fontSize="small" /></IconButton>
-          <IconButton size="small" color="error" onClick={() => setConfirm({ open: true, id: params.row.id })}><DeleteIcon fontSize="small" /></IconButton>
+          <IconButton size="small" color="error" onClick={() => setConfirm({ open: true, id: params.id })}><DeleteIcon fontSize="small" /></IconButton>
         </Box>
       )
     },
@@ -80,8 +80,9 @@ export default function PropertiesList() {
 
   const handleSubmit = async (values) => {
     try {
-      if (editing?.id) {
-        await propertyService.update(editing.id, values);
+      const id = editing?._id || editing?.id;
+      if (id) {
+        await propertyService.update(id, values);
         enqueueSnackbar('Property updated', { variant: 'success' });
       } else {
         await propertyService.create(values);
@@ -111,7 +112,9 @@ export default function PropertiesList() {
             <Skeleton variant="rounded" height={420} />
           ) : (
             <Paper sx={{ height: 500, width: '100%' }}>
-              <DataGrid rows={rows} columns={columns} pagination pageSizeOptions={[5, 10, 25]} initialState={{ pagination: { paginationModel: { pageSize: 10 } } }} />
+              <DataGrid rows={rows} columns={columns} getRowId={(row) => row.id || row._id}
+                pagination pageSizeOptions={[5, 10, 25]}
+                initialState={{ pagination: { paginationModel: { pageSize: 10 } } }} />
             </Paper>
           )}
         </Grid>

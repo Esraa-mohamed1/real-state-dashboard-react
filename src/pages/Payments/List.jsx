@@ -56,7 +56,7 @@ export default function PaymentsList() {
       renderCell: (params) => (
         <Box>
           <IconButton size="small" onClick={() => { setEditing(params.row); setOpen(true); }}><EditIcon fontSize="small" /></IconButton>
-          <IconButton size="small" color="error" onClick={() => setConfirm({ open: true, id: params.row.id })}><DeleteIcon fontSize="small" /></IconButton>
+          <IconButton size="small" color="error" onClick={() => setConfirm({ open: true, id: params.id })}><DeleteIcon fontSize="small" /></IconButton>
         </Box>
       )
     },
@@ -75,8 +75,9 @@ export default function PaymentsList() {
 
   const handleSubmit = async (values) => {
     try {
-      if (editing?.id) {
-        await paymentService.update(editing.id, values);
+      const id = editing?._id || editing?.id;
+      if (id) {
+        await paymentService.update(id, values);
         enqueueSnackbar('Payment updated', { variant: 'success' });
       } else {
         await paymentService.create(values);
@@ -106,7 +107,9 @@ export default function PaymentsList() {
             <Skeleton variant="rounded" height={420} />
           ) : (
             <Paper sx={{ height: 500, width: '100%' }}>
-              <DataGrid rows={rows} columns={columns} pagination pageSizeOptions={[5, 10, 25]} initialState={{ pagination: { paginationModel: { pageSize: 10 } } }} />
+              <DataGrid rows={rows} columns={columns} getRowId={(row) => row.id || row._id}
+                pagination pageSizeOptions={[5, 10, 25]}
+                initialState={{ pagination: { paginationModel: { pageSize: 10 } } }} />
             </Paper>
           )}
         </Grid>
