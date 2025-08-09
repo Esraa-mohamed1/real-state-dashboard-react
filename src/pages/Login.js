@@ -17,6 +17,8 @@ import * as yup from 'yup';
 import { useAuth } from '../context/AuthContext';
 import { useSnackbar } from 'notistack';
 import { alpha } from '@mui/material/styles';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const schema = yup.object({
   email: yup.string().email('Invalid email').required('Email is required'),
@@ -48,7 +50,18 @@ export default function Login() {
     } catch (err) {
       const message = err?.response?.data?.message || 'Login failed';
       setError(message);
-      enqueueSnackbar(message, { variant: 'error' });
+      Swal.fire({ icon: 'error', title: 'Login failed', text: message });
+    }
+  };
+
+  const onError = (formErrors) => {
+    const items = Object.values(formErrors).map((e) => e.message).filter(Boolean);
+    if (items.length) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Please fix validation errors',
+        html: `<ul style="text-align:left;margin:0;padding-left:18px;">${items.map((m) => `<li>${m}</li>`).join('')}</ul>`,
+      });
     }
   };
 
@@ -83,23 +96,11 @@ export default function Login() {
               color: 'white',
             }}
           >
-            <Box sx={{ 
-              width: 80, 
-              height: 80, 
-              borderRadius: '20px',
-              background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 16px',
-              boxShadow: '0 8px 32px rgba(251, 191, 36, 0.4)'
-            }}>
-              <Typography variant="h2" sx={{ fontWeight: 700, color: '#1a365d' }}>
-                R
-              </Typography>
+            <Box sx={{ width: 80, height: 80, borderRadius: '20px', overflow: 'hidden', margin: '0 auto 16px', boxShadow: '0 8px 32px rgba(251, 191, 36, 0.4)' }}>
+              <img src="/logoo-real.png" alt="App Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </Box>
             <Typography variant="h4" sx={{ fontWeight: 700, letterSpacing: '1px', mb: 1 }}>
-              RealC
+              Crystal Power Investments
             </Typography>
             <Typography variant="body1" sx={{ opacity: 0.9, fontWeight: 500 }}>
               Financial Management Dashboard
@@ -122,7 +123,7 @@ export default function Login() {
               </Alert>
             )}
 
-            <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 2 }}>
+            <Box component="form" onSubmit={handleSubmit(onSubmit, onError)} sx={{ mt: 2 }}>
               <Controller
                 name="email"
                 control={control}
