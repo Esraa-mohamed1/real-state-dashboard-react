@@ -54,8 +54,33 @@ export default function PropertiesList() {
 
   const columns = useMemo(() => [
     { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'type', headerName: 'Type', width: 150 },
+    { field: 'type', headerName: 'Type', width: 140 },
     { field: 'address', headerName: 'Address', flex: 1 },
+    {
+      field: 'unitsCount', headerName: 'Units', width: 100,
+      valueGetter: (params) => {
+        const units = Array.isArray(params?.row?.units) ? params.row.units : [];
+        return units.length;
+      },
+    },
+    {
+      field: 'rentedUnits', headerName: 'Rented', width: 100,
+      valueGetter: (params) => {
+        const units = Array.isArray(params?.row?.units) ? params.row.units : [];
+        return units.filter((u) => !!u?.isRented).length;
+      },
+    },
+    {
+      field: 'monthlyIncome', headerName: 'Monthly Income', width: 170,
+      valueGetter: (params) => {
+        const units = Array.isArray(params?.row?.units) ? params.row.units : [];
+        const sum = units
+          .filter((u) => !!u?.isRented)
+          .reduce((acc, u) => acc + Number(u?.monthlyRent || 0), 0);
+        return sum;
+      },
+      valueFormatter: ({ value }) => formatCurrency(value),
+    },
     {
       field: 'actions', headerName: 'Actions', width: 120, sortable: false, filterable: false,
       renderCell: (params) => (
