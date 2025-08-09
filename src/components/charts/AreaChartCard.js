@@ -11,6 +11,7 @@ export default function AreaChartCard({ title, data, dataKey, xKey, color = 'pri
   
   return (
     <Card sx={{ 
+      width: '100%',
       height: 400,
       background: `linear-gradient(135deg, ${alpha(chartColor, 0.02)} 0%, ${alpha(chartColor, 0.05)} 100%)`,
       border: `1px solid ${alpha(chartColor, 0.1)}`,
