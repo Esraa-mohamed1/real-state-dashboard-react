@@ -1,144 +1,310 @@
 import React, { useState } from 'react';
-import { Link, NavLink, Outlet } from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
-import Button from '@mui/material/Button';
-import MenuIcon from '@mui/icons-material/Menu';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import PaidIcon from '@mui/icons-material/Paid';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import HomeWorkIcon from '@mui/icons-material/HomeWork';
-import LoginIcon from '@mui/icons-material/Login';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-import { useColorMode } from './ThemeProvider';
+import { Link, useLocation } from 'react-router-dom';
+import {
+  AppBar,
+  Box,
+  CssBaseline,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography,
+  Button,
+  Avatar,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import {
+  Menu as MenuIcon,
+  Dashboard as DashboardIcon,
+  Payment as PaymentIcon,
+  AccountBalance as AccountBalanceIcon,
+  HomeWork as HomeWorkIcon,
+  Brightness4 as Brightness4Icon,
+  Brightness7 as Brightness7Icon,
+} from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
+import { useTheme as useAppTheme } from '../context/ThemeContext';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: <DashboardIcon /> },
-  { to: '/payments', label: 'Payments', icon: <PaidIcon /> },
-  { to: '/debts', label: 'Debts', icon: <AccountBalanceWalletIcon /> },
-  { to: '/properties', label: 'Properties', icon: <HomeWorkIcon /> },
-  { to: '/login', label: 'Login', icon: <LoginIcon /> },
+const menuItems = [
+  { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+  { text: 'Payments', icon: <PaymentIcon />, path: '/payments' },
+  { text: 'Debts', icon: <AccountBalanceIcon />, path: '/debts' },
+  { text: 'Properties', icon: <HomeWorkIcon />, path: '/properties' },
 ];
 
-export default function Layout() {
-  const theme = useTheme();
-  const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
+export default function Layout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { mode, toggleColorMode } = useColorMode();
   const { user, isAuthenticated, logout } = useAuth();
+  const { mode, toggleColorMode } = useAppTheme();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const location = useLocation();
 
-  const drawerContent = (
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const drawer = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h6" component={Link} to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-          Crystal Power
+      {/* Logo Section */}
+      <Box sx={{ 
+        p: 3, 
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+        color: 'white'
+      }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ width: 48, height: 48, borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(251, 191, 36, 0.3)' }}>
+            <img src="/logoo-real.png" alt="App Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </Box>
+          <Typography variant="h5" sx={{ fontWeight: 700, letterSpacing: '0.5px' }}>
+            Crystal Power
+          </Typography>
+        </Box>
+        <Typography variant="body2" sx={{ mt: 1, opacity: 0.9, fontWeight: 500 }}>
+          Financial Management
         </Typography>
       </Box>
-      <Divider />
-      <List sx={{ flexGrow: 1 }}>
-        {navItems.map((item) => (
-          <ListItemButton
-            key={item.to}
-            component={NavLink}
-            to={item.to}
-            sx={{
-              '&.active': {
-                bgcolor: 'action.selected',
-              },
-            }}
-            onClick={() => setMobileOpen(false)}
-          >
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.label} />
-          </ListItemButton>
-        ))}
+
+      {/* Navigation Menu */}
+      <List sx={{ flexGrow: 1, pt: 2 }}>
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <ListItem key={item.text} disablePadding sx={{ mb: 1, mx: 2 }}>
+              <ListItemButton
+                component={Link}
+                to={item.path}
+                sx={{
+                  borderRadius: 2,
+                  backgroundColor: isActive ? theme.palette.primary.main : 'transparent',
+                  color: isActive ? 'white' : theme.palette.text.primary,
+                  '&:hover': {
+                    backgroundColor: isActive 
+                      ? theme.palette.primary.dark 
+                      : theme.palette.action.hover,
+                  },
+                  '& .MuiListItemIcon-root': {
+                    color: isActive ? 'white' : theme.palette.text.secondary,
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={item.text} 
+                  primaryTypographyProps={{ fontWeight: isActive ? 600 : 500 }}
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
-      <Divider />
-      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography variant="body2">Theme</Typography>
-        <IconButton onClick={toggleColorMode} color="inherit" size="small">
-          {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-        </IconButton>
-      </Box>
+
+      {/* User Info */}
+      {isAuthenticated && (
+        <Box sx={{ p: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <Avatar sx={{ 
+              bgcolor: theme.palette.primary.main,
+              width: 40,
+              height: 40
+            }}>
+              {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+            </Avatar>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                {user?.name}
+              </Typography>
+              {user?.isAdmin && (
+                <Typography variant="caption" sx={{ 
+                  bgcolor: theme.palette.warning.main, 
+                  color: 'white', 
+                  px: 1, 
+                  py: 0.5, 
+                  borderRadius: 1,
+                  fontSize: '0.7rem',
+                  fontWeight: 600
+                }}>
+                  Admin
+                </Typography>
+              )}
+            </Box>
+          </Box>
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={logout}
+            sx={{ 
+              borderColor: theme.palette.error.main,
+              color: theme.palette.error.main,
+              '&:hover': {
+                borderColor: theme.palette.error.dark,
+                backgroundColor: theme.palette.error.main,
+                color: 'white'
+              }
+            }}
+          >
+            Logout
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <AppBar position="fixed" sx={{ zIndex: (t) => t.zIndex.drawer + 1 }}>
-        <Toolbar>
-          {!isMdUp && (
-            <IconButton color="inherit" edge="start" onClick={() => setMobileOpen(true)} sx={{ mr: 2 }}>
-              <MenuIcon />
-            </IconButton>
-          )}
-          <Typography variant="h6" noWrap component={Link} to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            Real Estate Financial Dashboard
-          </Typography>
-          <Box sx={{ flexGrow: 1 }} />
-          {isAuthenticated && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mr: 2 }}>
-              <Typography variant="body2">{user?.name}</Typography>
-              {user?.isAdmin && (
-                <Typography variant="caption" sx={{ bgcolor: 'warning.main', color: 'warning.contrastText', px: 1, borderRadius: 1 }}>
-                  Admin
-                </Typography>
-              )}
-            </Box>
-          )}
-          {isAuthenticated ? (
-            <Button color="inherit" onClick={logout}>Logout</Button>
-          ) : (
-            <Button color="inherit" component={Link} to="/login">Login</Button>
-          )}
-          <IconButton onClick={toggleColorMode} color="inherit">
-            {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+      <CssBaseline />
+      
+      {/* App Bar */}
+      <AppBar 
+        position="fixed" 
+        sx={{ 
+          zIndex: theme.zIndex.drawer + 1,
+          background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+        }}
+      >
+        <Toolbar sx={{ minHeight: 70 }}>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { md: 'none' } }}
+          >
+            <MenuIcon />
           </IconButton>
+          
+          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
+            {menuItems.find(item => item.path === location.pathname)?.text || 'Dashboard'}
+          </Typography>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {isAuthenticated && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mr: 2 }}>
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  {user?.name}
+                </Typography>
+                {user?.isAdmin && (
+                  <Typography variant="caption" sx={{ 
+                    bgcolor: theme.palette.warning.main, 
+                    color: 'white', 
+                    px: 1, 
+                    py: 0.5, 
+                    borderRadius: 1,
+                    fontSize: '0.7rem',
+                    fontWeight: 600
+                  }}>
+                    Admin
+                  </Typography>
+                )}
+              </Box>
+            )}
+            
+            {isAuthenticated ? (
+              <Button 
+                color="inherit" 
+                onClick={logout}
+                sx={{ 
+                  fontWeight: 600,
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                  }
+                }}
+              >
+                Logout
+              </Button>
+            ) : (
+              <Button 
+                color="inherit" 
+                component={Link} 
+                to="/login"
+                sx={{ 
+                  fontWeight: 600,
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                  }
+                }}
+              >
+                Login
+              </Button>
+            )}
+            
+            <IconButton 
+              onClick={toggleColorMode} 
+              color="inherit"
+              sx={{ 
+                ml: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                }
+              }}
+            >
+              {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
 
-      {isMdUp ? (
-        <Drawer
-          variant="permanent"
-          open
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' },
-          }}
-        >
-          {drawerContent}
-        </Drawer>
-      ) : (
+      {/* Drawer */}
+      <Box
+        component="nav"
+        sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
+      >
         <Drawer
           variant="temporary"
           open={mobileOpen}
-          onClose={() => setMobileOpen(false)}
+          onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
-          sx={{ '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' } }}
+          sx={{
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              border: 'none'
+            },
+          }}
         >
-          {drawerContent}
+          {drawer}
         </Drawer>
-      )}
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              border: 'none'
+            },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
+      </Box>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { md: `calc(100% - ${drawerWidth}px)` } }}>
-        <Toolbar />
-        <Outlet />
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { md: `calc(100% - ${drawerWidth}px)` },
+          mt: '70px',
+          minHeight: 'calc(100vh - 70px)',
+          background: theme.palette.background.default,
+        }}
+      >
+        {children}
       </Box>
     </Box>
   );
