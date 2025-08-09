@@ -7,32 +7,44 @@ import PaidIcon from '@mui/icons-material/Paid';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { getOverview } from '../services/dashboardService';
+import { paymentService } from '../services/paymentService';
 import { useSnackbar } from 'notistack';
 import { formatCurrency } from '../utils/formatters';
-
-const mockChartData = [
-  { name: 'Jan', value: 12000 },
-  { name: 'Feb', value: 14500 },
-  { name: 'Mar', value: 13800 },
-  { name: 'Apr', value: 16000 },
-  { name: 'May', value: 15500 },
-  { name: 'Jun', value: 17000 },
-];
 
 export default function Dashboard() {
   const { enqueueSnackbar } = useSnackbar();
   const [data, setData] = useState(null);
+  const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [chartLoading, setChartLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await getOverview();
-        setData(res);
+        const [overviewRes, payments] = await Promise.all([
+          getOverview(),
+          paymentService.getAll(),
+        ]);
+        setData(overviewRes);
+        // Aggregate payments by month (YYYY-MM)
+        const byMonth = payments.reduce((acc, p) => {
+          const d = new Date(p.date);
+          const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+          acc[key] = (acc[key] || 0) + Number(p.amount || 0);
+          return acc;
+        }, {});
+        const sortedKeys = Object.keys(byMonth).sort();
+        const aggregated = sortedKeys.map((k) => {
+          const [y, m] = k.split('-');
+          const monthLabel = new Date(Number(y), Number(m) - 1).toLocaleString(undefined, { month: 'short' });
+          return { name: `${monthLabel} ${y.slice(2)}`, value: byMonth[k] };
+        });
+        setChartData(aggregated);
       } catch (err) {
-        enqueueSnackbar(err?.response?.data?.message || 'Failed to load dashboard overview', { variant: 'error' });
+        enqueueSnackbar(err?.response?.data?.message || 'Failed to load dashboard data', { variant: 'error' });
       } finally {
         setLoading(false);
+        setChartLoading(false);
       }
     })();
   }, [enqueueSnackbar]);
@@ -54,7 +66,11 @@ export default function Dashboard() {
       ))}
 
       <Grid item xs={12}>
-        <AreaChartCard title="Monthly Inflows" data={mockChartData} dataKey="value" xKey="name" />
+        {chartLoading ? (
+          <Skeleton variant="rounded" height={320} />
+        ) : (
+          <AreaChartCard title="Monthly Payments" data={chartData} dataKey="value" xKey="name" />
+        )}
       </Grid>
     </Grid>
   );
