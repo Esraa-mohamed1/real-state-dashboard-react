@@ -297,7 +297,8 @@ export default function Layout({ children }) {
               border: 'none',
               height: '100vh',
               display: 'flex',
-              flexDirection: 'column'
+              flexDirection: 'column',
+              overflow: 'hidden'
             },
           }}
           open

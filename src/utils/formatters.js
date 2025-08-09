@@ -1,6 +1,7 @@
 export function formatCurrency(amount) {
-  if (amount === null || amount === undefined || isNaN(amount)) return '-';
-  return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+  const num = Number(amount);
+  if (!isFinite(num)) return '-';
+  return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num);
 }
 
 export function formatDate(isoString) {
