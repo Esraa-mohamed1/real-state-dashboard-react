@@ -59,20 +59,28 @@ export default function PropertiesList() {
     { field: 'address', headerName: 'Address', flex: 1, minWidth: 250 },
     {
       field: 'unitsCount', headerName: 'Units', width: 100,
+      type: 'number', align: 'right', headerAlign: 'right',
       valueGetter: (params) => {
         const units = Array.isArray(params?.row?.units) ? params.row.units : [];
         return units.length;
       },
+      renderCell: (params) => Number(Array.isArray(params?.row?.units) ? params.row.units.length : 0),
     },
     {
       field: 'rentedUnits', headerName: 'Rented', width: 100,
+      type: 'number', align: 'right', headerAlign: 'right',
       valueGetter: (params) => {
+        const units = Array.isArray(params?.row?.units) ? params.row.units : [];
+        return units.filter((u) => !!u?.isRented).length;
+      },
+      renderCell: (params) => {
         const units = Array.isArray(params?.row?.units) ? params.row.units : [];
         return units.filter((u) => !!u?.isRented).length;
       },
     },
     {
       field: 'monthlyIncome', headerName: 'Monthly Income', width: 170,
+      type: 'number', align: 'right', headerAlign: 'right',
       valueGetter: (params) => {
         const units = Array.isArray(params?.row?.units) ? params.row.units : [];
         const sum = units
@@ -80,7 +88,12 @@ export default function PropertiesList() {
           .reduce((acc, u) => acc + Number(u?.monthlyRent || 0), 0);
         return sum;
       },
-      valueFormatter: ({ value }) => formatCurrency(value),
+      valueFormatter: (params) => formatCurrency(params?.value),
+      renderCell: (params) => {
+        const units = Array.isArray(params?.row?.units) ? params.row.units : [];
+        const sum = units.filter((u) => !!u?.isRented).reduce((acc, u) => acc + Number(u?.monthlyRent || 0), 0);
+        return formatCurrency(sum);
+      },
     },
     {
       field: 'actions', headerName: 'Actions', width: 120, sortable: false, filterable: false,

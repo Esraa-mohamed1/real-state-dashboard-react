@@ -53,8 +53,25 @@ export default function PaymentsList() {
 
   const columns = useMemo(() => [
     { field: 'payer', headerName: 'Payer', flex: 1 },
-    { field: 'amount', headerName: 'Amount', width: 140, valueFormatter: ({ value }) => formatCurrency(value) },
-    { field: 'date', headerName: 'Date', width: 140, valueFormatter: ({ value }) => formatDate(value) },
+    { 
+      field: 'amount', 
+      headerName: 'Amount', 
+      width: 140, 
+      type: 'number',
+      align: 'right',
+      headerAlign: 'right',
+      valueGetter: (params) => Number(params?.row?.amount ?? 0),
+      valueFormatter: (params) => formatCurrency(params?.value),
+      renderCell: (params) => formatCurrency(Number(params?.row?.amount ?? 0)),
+    },
+    { 
+      field: 'date', 
+      headerName: 'Date', 
+      width: 160,
+      valueGetter: (params) => params?.row?.date || params?.row?.createdAt || null,
+      valueFormatter: (params) => formatDate(params?.value),
+      renderCell: (params) => formatDate(params?.row?.date || params?.row?.createdAt),
+    },
     { field: 'description', headerName: 'Description', flex: 1 },
     {
       field: 'actions', headerName: 'Actions', width: 120, sortable: false, filterable: false,
@@ -119,7 +136,12 @@ export default function PaymentsList() {
             <Paper sx={{ height: 500, width: '100%' }}>
               <DataGrid rows={rows} columns={columns} getRowId={(row) => row.id || row._id}
                 pagination pageSizeOptions={[5, 10, 25]}
-                initialState={{ pagination: { paginationModel: { pageSize: 10 } } }} />
+                initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
+                sx={{
+                  '& .MuiDataGrid-columnHeaders': { fontWeight: 700 },
+                  '& .MuiDataGrid-cell': { py: 1 },
+                }}
+              />
             </Paper>
           )}
         </Grid>
