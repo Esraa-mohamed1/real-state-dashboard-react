@@ -6,6 +6,10 @@ build/
 dist/
 .tmp/
 
+# caches
+node_modules/.cache/
+.cache/
+
 # env
 .env
 .env.local
