@@ -7,9 +7,9 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import PaymentsList from './pages/Payments/List';
-import DebtsList from './pages/Debts/List';
-import PropertiesList from './pages/Properties/List';
+import PaymentsList from './pages/Payments/List.jsx';
+import DebtsList from './pages/Debts/List.jsx';
+import PropertiesList from './pages/Properties/List.jsx';
 import NotFound from './pages/NotFound';
 
 function App() {
