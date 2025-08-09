@@ -20,7 +20,7 @@ export default function SummaryCard({ title, value, icon, color = 'primary' }) {
       }}
     >
       <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, gap: 2 }}>
           <Typography 
             variant="body2" 
             sx={{ 
@@ -34,7 +34,7 @@ export default function SummaryCard({ title, value, icon, color = 'primary' }) {
             {title}
           </Typography>
           <Box sx={{ 
-            p: 1.5, 
+            p: 1.5,
             borderRadius: 2,
             background: `linear-gradient(135deg, ${color === 'primary' ? '#1a365d' : color === 'secondary' ? '#0d9488' : color === 'success' ? '#059669' : color === 'warning' ? '#d97706' : color === 'error' ? '#dc2626' : '#0891b2'} 0%, ${color === 'primary' ? '#2d5a87' : color === 'secondary' ? '#14b8a6' : color === 'success' ? '#10b981' : color === 'warning' ? '#f59e0b' : color === 'error' ? '#ef4444' : '#06b6d4'} 100%)`,
             color: 'white',

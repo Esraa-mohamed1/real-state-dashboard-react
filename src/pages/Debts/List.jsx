@@ -41,7 +41,12 @@ export default function DebtsList() {
         debtService.getBreakdown(),
         debtService.getSummary(),
       ]);
-      setRows(list);
+      const normalized = (Array.isArray(list) ? list : []).map((d) => ({
+        ...d,
+        amount: Number(d?.amount ?? 0),
+        date: d?.date ? new Date(d.date).toISOString() : null,
+      }));
+      setRows(normalized);
       setBreakdown(bd?.map(b => ({ name: b.category, value: b.totalAmount })) || []);
       setSummary(sum);
     } catch (err) {
@@ -106,7 +111,7 @@ export default function DebtsList() {
 
   return (
     <Box>
-      <Grid container spacing={2} sx={{ mb: 2 }}>
+      <Grid container spacing={3} sx={{ mb: 3 }}>
         <Grid item xs={12} md={9}>
           <Typography variant="h5">Debts</Typography>
         </Grid>

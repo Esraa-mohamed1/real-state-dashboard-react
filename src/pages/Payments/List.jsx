@@ -35,7 +35,12 @@ export default function PaymentsList() {
         paymentService.getAll(),
         paymentService.getSummary(),
       ]);
-      setRows(list);
+      const normalized = (Array.isArray(list) ? list : []).map((p) => ({
+        ...p,
+        amount: Number(p?.amount ?? 0),
+        date: p?.date ? new Date(p.date).toISOString() : null,
+      }));
+      setRows(normalized);
       setSummary(sum);
     } catch (err) {
       enqueueSnackbar(err?.response?.data?.message || 'Failed to load payments', { variant: 'error' });
