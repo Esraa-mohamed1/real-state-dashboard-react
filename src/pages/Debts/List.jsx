@@ -14,6 +14,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import { useSnackbar } from 'notistack';
+import { useTheme, alpha } from '@mui/material/styles';
 import { debtService } from '../../services/debtService';
 import DebtForm from './Form.jsx';
 import ConfirmDialog from '../../components/ConfirmDialog';
@@ -24,6 +25,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 export default function DebtsList() {
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,38 +61,118 @@ export default function DebtsList() {
   useEffect(() => { load(); }, []);
 
   const columns = useMemo(() => [
-    { field: 'category', headerName: 'Category', width: 150 },
+    { 
+      field: 'category', 
+      headerName: 'Category', 
+      width: 150,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => (
+        <Typography variant="body2" textAlign="center">
+          {params.value}
+        </Typography>
+      )
+    },
     { 
       field: 'amount', 
       headerName: 'Amount', 
       width: 140, 
       type: 'number',
-      align: 'right',
-      headerAlign: 'right',
+      align: 'center',
+      headerAlign: 'center',
       valueGetter: (params) => Number(params?.row?.amount ?? 0),
       valueFormatter: (params) => formatCurrency(params?.value),
-      renderCell: (params) => formatCurrency(Number(params?.row?.amount ?? 0)),
+      renderCell: (params) => (
+        <Typography variant="body2" fontWeight={500} textAlign="center">
+          {formatCurrency(Number(params?.row?.amount ?? 0))}
+        </Typography>
+      ),
     },
     { 
       field: 'date', 
       headerName: 'Date', 
       width: 160,
+      headerAlign: 'center',
+      align: 'center',
       valueGetter: (params) => params?.row?.date || params?.row?.createdAt || null,
       valueFormatter: (params) => formatDate(params?.value),
-      renderCell: (params) => formatDate(params?.row?.date || params?.row?.createdAt),
-    },
-    { field: 'status', headerName: 'Status', width: 130 },
-    { field: 'description', headerName: 'Description', flex: 1 },
-    {
-      field: 'actions', headerName: 'Actions', width: 120, sortable: false, filterable: false,
       renderCell: (params) => (
-        <Box>
-          <IconButton size="small" onClick={() => { setEditing(params.row); setOpen(true); }}><EditIcon fontSize="small" /></IconButton>
-          <IconButton size="small" color="error" onClick={() => setConfirm({ open: true, id: params.id })}><DeleteIcon fontSize="small" /></IconButton>
+        <Typography variant="body2" textAlign="center">
+          {formatDate(params?.row?.date || params?.row?.createdAt)}
+        </Typography>
+      ),
+    },
+    { 
+      field: 'status', 
+      headerName: 'Status', 
+      width: 130,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => (
+        <Box
+          sx={{
+            px: 1.5,
+            py: 0.5,
+            borderRadius: 4,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: params.value === 'Settled' ? 
+              alpha(theme.palette.success.main, 0.1) : 
+              alpha(theme.palette.warning.main, 0.1),
+            color: params.value === 'Settled' ? 
+              theme.palette.success.dark : 
+              theme.palette.warning.dark,
+            fontWeight: 500,
+            fontSize: '0.75rem',
+            width: '100%',
+            textAlign: 'center'
+          }}
+        >
+          {params.value}
         </Box>
       )
     },
-  ], []);
+    { 
+      field: 'description', 
+      headerName: 'Description', 
+      flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => (
+        <Typography variant="body2" textAlign="center">
+          {params.value}
+        </Typography>
+      )
+    },
+    {
+      field: 'actions', 
+      headerName: 'Actions', 
+      width: 120, 
+      sortable: false, 
+      filterable: false,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => (
+        <Box display="flex" justifyContent="center" width="100%">
+          <IconButton 
+            size="small" 
+            onClick={() => { setEditing(params.row); setOpen(true); }}
+            sx={{ color: theme.palette.text.secondary }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton 
+            size="small" 
+            color="error" 
+            onClick={() => setConfirm({ open: true, id: params.id })}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      )
+    },
+  ], [theme]);
 
   const handleDelete = async () => {
     try {
@@ -127,63 +209,192 @@ export default function DebtsList() {
   };
 
   return (
-    <Box>
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={9}>
-          <Typography variant="h5">Debts</Typography>
-        </Grid>
-        <Grid item xs={12} md={3} sx={{ textAlign: { xs: 'left', md: 'right' } }}>
-          <Button startIcon={<AddIcon />} variant="contained" onClick={() => { setEditing(null); setOpen(true); }}>
-            Add Debt
-          </Button>
-        </Grid>
-        <Grid item xs={12} md={8}>
+    <Box sx={{ 
+      p: 3,
+      maxWidth: 1200,
+      margin: '0 auto'
+    }}>
+      {/* Main Header Section */}
+      <Box sx={{ 
+        mb: 4,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center'
+      }}>
+        <Typography 
+          variant="h4" 
+          fontWeight={700}
+          sx={{ 
+            mb: 2,
+            color: theme.palette.primary.main,
+            textTransform: 'uppercase',
+            letterSpacing: 1
+          }}
+        >
+          Debt Management
+        </Typography>
+        <Button 
+          startIcon={<AddIcon />} 
+          variant="contained" 
+          onClick={() => { setEditing(null); setOpen(true); }}
+          sx={{
+            textTransform: 'none',
+            px: 4,
+            py: 1,
+            borderRadius: 2,
+            boxShadow: theme.shadows[2],
+            '&:hover': {
+              boxShadow: theme.shadows[4]
+            }
+          }}
+        >
+          Add New Debt
+        </Button>
+      </Box>
+
+      {/* Centered Table */}
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        mb: 4
+      }}>
+        <Box sx={{ 
+          width: '100%',
+          maxWidth: '100%',
+          overflow: 'hidden'
+        }}>
           {loading ? (
-            <Skeleton variant="rounded" height={420} />
+            <Skeleton variant="rounded" height={500} />
           ) : (
-            <Paper sx={{ height: 500, width: '100%' }}>
-              <DataGrid rows={rows} columns={columns} getRowId={(row) => row.id || row._id}
-                pagination pageSizeOptions={[5, 10, 25]}
+            <Paper sx={{ 
+              height: 500,
+              borderRadius: 3,
+              overflow: 'hidden',
+              boxShadow: theme.shadows[2]
+            }}>
+              <DataGrid 
+                rows={rows} 
+                columns={columns} 
+                getRowId={(row) => row.id || row._id}
+                pagination 
+                pageSizeOptions={[5, 10, 25]}
                 initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
                 sx={{
-                  '& .MuiDataGrid-columnHeaders': { fontWeight: 700 },
-                  '& .MuiDataGrid-cell': { py: 1 },
+                  '& .MuiDataGrid-columnHeaders': { 
+                    backgroundColor: theme.palette.grey[100],
+                    fontWeight: 600,
+                    borderBottom: `1px solid ${theme.palette.divider}`,
+                    '& .MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 700,
+                      color: theme.palette.text.primary
+                    }
+                  },
+                  '& .MuiDataGrid-cell': { 
+                    py: 1.5,
+                    borderBottom: `1px solid ${theme.palette.divider}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  },
+                  '& .MuiDataGrid-cell:focus': {
+                    outline: 'none'
+                  },
+                  '& .MuiDataGrid-row:hover': {
+                    backgroundColor: theme.palette.action.hover
+                  }
                 }}
               />
             </Paper>
           )}
-        </Grid>
+        </Box>
+      </Box>
+
+      {/* Cards Section Below Table */}
+      <Grid container spacing={3} justifyContent="center">
+        {/* Summary Cards */}
         <Grid item xs={12} md={6}>
           {loading ? (
-            <Skeleton variant="rounded" height={96} />
+            <Skeleton variant="rounded" height={120} />
           ) : (
-            <SummaryCard title="Pending" value={formatCurrency(summary?.pending)} color="warning" icon={<AccountBalanceWalletIcon />} />
+            <SummaryCard 
+              title="Pending" 
+              value={formatCurrency(summary?.pending)} 
+              color="warning" 
+              icon={<AccountBalanceWalletIcon />} 
+              sx={{ height: '100%' }}
+            />
           )}
         </Grid>
         <Grid item xs={12} md={6}>
           {loading ? (
-            <Skeleton variant="rounded" height={96} />
+            <Skeleton variant="rounded" height={120} />
           ) : (
-            <SummaryCard title="Settled" value={formatCurrency(summary?.settled)} color="success" icon={<CheckCircleIcon />} />
+            <SummaryCard 
+              title="Settled" 
+              value={formatCurrency(summary?.settled)} 
+              color="success" 
+              icon={<CheckCircleIcon />} 
+              sx={{ height: '100%' }}
+            />
           )}
         </Grid>
+
+        {/* Pie Chart */}
         <Grid item xs={12}>
           {loading ? (
             <Skeleton variant="rounded" height={420} />
           ) : (
-            <PieChartCard title="Debt Breakdown" data={breakdown} nameKey="name" valueKey="value" />
+            <PieChartCard 
+              title="Debt Breakdown" 
+              data={breakdown} 
+              nameKey="name" 
+              valueKey="value" 
+            />
           )}
         </Grid>
       </Grid>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>{editing ? 'Edit Debt' : 'Add Debt'}</DialogTitle>
-        <DialogContent>
-          <DebtForm initialValues={editing} onSubmit={handleSubmit} onCancel={() => setOpen(false)} submitting={false} />
+      {/* Form Dialog */}
+      <Dialog 
+        open={open} 
+        onClose={() => setOpen(false)} 
+        maxWidth="sm" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            boxShadow: theme.shadows[10]
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          fontWeight: 600,
+          borderBottom: `1px solid ${theme.palette.divider}`,
+          py: 2,
+          backgroundColor: theme.palette.primary.main,
+          color: theme.palette.primary.contrastText
+        }}>
+          {editing ? 'Edit Debt' : 'Add New Debt'}
+        </DialogTitle>
+        <DialogContent sx={{ py: 3 }}>
+          <DebtForm 
+            initialValues={editing} 
+            onSubmit={handleSubmit} 
+            onCancel={() => setOpen(false)} 
+            submitting={false} 
+          />
         </DialogContent>
       </Dialog>
 
-      <ConfirmDialog open={confirm.open} onCancel={() => setConfirm({ open: false, id: null })} onConfirm={handleDelete} title="Delete Debt" content="Are you sure you want to delete this debt?" />
+      {/* Confirm Dialog */}
+      <ConfirmDialog 
+        open={confirm.open} 
+        onCancel={() => setConfirm({ open: false, id: null })} 
+        onConfirm={handleDelete} 
+        title="Delete Debt" 
+        content="Are you sure you want to delete this debt?" 
+      />
     </Box>
   );
-} 
+}
