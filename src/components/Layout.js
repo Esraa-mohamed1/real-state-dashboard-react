@@ -17,8 +17,6 @@ import {
   Avatar,
   useMediaQuery,
   useTheme,
-  Divider,
-  Badge,
   alpha
 } from '@mui/material';
 import {
@@ -29,8 +27,6 @@ import {
   HomeWork as HomeWorkIcon,
   Brightness4 as Brightness4Icon,
   Brightness7 as Brightness7Icon,
-  Notifications as NotificationsIcon,
-  Settings as SettingsIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { useTheme as useAppTheme } from '../context/ThemeContext';
@@ -39,9 +35,9 @@ const drawerWidth = 280;
 const collapsedDrawerWidth = 80;
 
 const menuItems = [
-  { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard', badge: 3 },
+  { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
   { text: 'Payments', icon: <PaymentIcon />, path: '/payments' },
-  { text: 'Debts', icon: <AccountBalanceIcon />, path: '/debts', badge: 5 },
+  { text: 'Debts', icon: <AccountBalanceIcon />, path: '/debts' },
   { text: 'Properties', icon: <HomeWorkIcon />, path: '/properties' },
 ];
 
@@ -198,38 +194,14 @@ export default function Layout({ children }) {
                 }}
                 onClick={() => { if (isMobile) setMobileOpen(false); }}
               >
-                {item.badge ? (
-                  <Badge 
-                    badgeContent={item.badge} 
-                    color="error" 
-                    overlap="circular"
-                    sx={{ 
-                      mr: sidebarCollapsed ? 0 : 2,
-                      '& .MuiBadge-badge': {
-                        fontSize: '0.6rem',
-                        height: 16,
-                        minWidth: 16,
-                      }
-                    }}
-                  >
-                    <ListItemIcon sx={{ 
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      {item.icon}
-                    </ListItemIcon>
-                  </Badge>
-                ) : (
-                  <ListItemIcon sx={{ 
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    mr: sidebarCollapsed ? 0 : 2
-                  }}>
-                    {item.icon}
-                  </ListItemIcon>
-                )}
+                <ListItemIcon sx={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mr: sidebarCollapsed ? 0 : 2
+                }}>
+                  {item.icon}
+                </ListItemIcon>
                 {!sidebarCollapsed && (
                   <ListItemText 
                     primary={item.text} 
@@ -254,28 +226,9 @@ export default function Layout({ children }) {
         })}
       </List>
 
-      {/* Bottom Section */}
-      <Box sx={{ p: sidebarCollapsed ? 1.5 : 2 }}>
-        {!sidebarCollapsed && (
-          <Box sx={{ mb: 2 }}>
-            <Button
-              variant="contained"
-              fullWidth
-              startIcon={<SettingsIcon />}
-              sx={{
-                textTransform: 'none',
-                borderRadius: 2,
-                py: 1,
-                fontWeight: 500
-              }}
-            >
-              Settings
-            </Button>
-          </Box>
-        )}
-        
-        {/* User Info */}
-        {isAuthenticated && (
+      {/* User Info */}
+      {isAuthenticated && (
+        <Box sx={{ p: sidebarCollapsed ? 1.5 : 2 }}>
           <Box 
             sx={{ 
               display: 'flex', 
@@ -290,32 +243,16 @@ export default function Layout({ children }) {
               }
             }}
           >
-            <Badge
-              overlap="circular"
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              badgeContent={
-                <Box
-                  sx={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: '50%',
-                    backgroundColor: theme.palette.success.main,
-                    border: `2px solid ${theme.palette.background.paper}`
-                  }}
-                />
-              }
+            <Avatar 
+              sx={{ 
+                width: sidebarCollapsed ? 36 : 40,
+                height: sidebarCollapsed ? 36 : 40,
+                bgcolor: theme.palette.primary.main,
+                fontSize: '1rem'
+              }}
             >
-              <Avatar 
-                sx={{ 
-                  width: sidebarCollapsed ? 36 : 40,
-                  height: sidebarCollapsed ? 36 : 40,
-                  bgcolor: theme.palette.primary.main,
-                  fontSize: '1rem'
-                }}
-              >
-                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-              </Avatar>
-            </Badge>
+              {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+            </Avatar>
             
             {!sidebarCollapsed && (
               <Box sx={{ flexGrow: 1, minWidth: 0 }}>
@@ -345,8 +282,8 @@ export default function Layout({ children }) {
               </Box>
             )}
           </Box>
-        )}
-      </Box>
+        </Box>
+      )}
     </Box>
   );
 
@@ -422,21 +359,6 @@ export default function Layout({ children }) {
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton 
-              size="medium"
-              color="inherit"
-              sx={{
-                color: theme.palette.text.secondary,
-                '&:hover': {
-                  backgroundColor: theme.palette.action.hover
-                }
-              }}
-            >
-              <Badge badgeContent={4} color="error">
-                <NotificationsIcon fontSize="small" />
-              </Badge>
-            </IconButton>
-            
             <IconButton 
               onClick={toggleColorMode} 
               color="inherit"
