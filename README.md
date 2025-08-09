@@ -168,6 +168,3 @@ npm run serve
 - `npm start` – development server
 - `npm run build` – produce production build
 - `npm run serve` – serve `build` using Express with SPA fallback
-
-## License
-MIT (or your preferred license) 
