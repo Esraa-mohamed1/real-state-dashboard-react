@@ -6,6 +6,8 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import TextFieldController from '../../components/forms/TextFieldController';
 import UnitsEditor from './UnitsEditor';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const schema = yup.object().shape({
   name: yup.string().required('Name is required'),
@@ -29,8 +31,19 @@ export default function PropertyForm({ initialValues, onSubmit, onCancel, submit
     reset(initialValues || { name: '', type: '', address: '', units: [] });
   }, [initialValues, reset]);
 
+  const onError = (formErrors) => {
+    const items = Object.values(formErrors).map((e) => e.message).filter(Boolean);
+    if (items.length) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Please fix validation errors',
+        html: `<ul style="text-align:left;margin:0;padding-left:18px;">${items.map((m) => `<li>${m}</li>`).join('')}</ul>`,
+      });
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit, onError)}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <TextFieldController name="name" control={control} label="Name" />

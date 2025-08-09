@@ -39,6 +39,8 @@ const menuItems = [
   { text: 'Properties', icon: <HomeWorkIcon />, path: '/properties' },
 ];
 
+const logoSrc = (process.env.PUBLIC_URL || '') + '/logoo-real.png';
+
 export default function Layout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
@@ -54,27 +56,9 @@ export default function Layout({ children }) {
   const drawer = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Logo Section */}
-      <Box sx={{ 
-        p: 3, 
-        borderBottom: `1px solid ${theme.palette.divider}`,
-        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-        color: 'white'
-      }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Box sx={{ width: 48, height: 48, borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(251, 191, 36, 0.3)' }}>
-            <img src="/logoo-real.png" alt="App Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, letterSpacing: '0.5px' }}>
-            Crystal Power
-          </Typography>
-        </Box>
-        <Typography variant="body2" sx={{ mt: 1, opacity: 0.9, fontWeight: 500 }}>
-          Financial Management
-        </Typography>
-      </Box>
-
+    
       {/* Navigation Menu */}
-      <List sx={{ flexGrow: 1, pt: 2 }}>
+      <List sx={{ flexGrow: 1, pt: 2, overflowY: 'auto', minHeight: 0 }}>
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
@@ -95,6 +79,7 @@ export default function Layout({ children }) {
                     color: isActive ? 'white' : theme.palette.text.secondary,
                   },
                 }}
+                onClick={() => { if (isMobile) setMobileOpen(false); }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   {item.icon}
@@ -184,6 +169,13 @@ export default function Layout({ children }) {
             <MenuIcon />
           </IconButton>
           
+          {/* Small logo on desktop */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', mr: 2 }}>
+            <Box sx={{ width: 28, height: 28, borderRadius: '6px', overflow: 'hidden' }}>
+              <img src={logoSrc} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </Box>
+          </Box>
+
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
             {menuItems.find(item => item.path === location.pathname)?.text || 'Dashboard'}
           </Typography>
@@ -270,7 +262,10 @@ export default function Layout({ children }) {
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
               width: drawerWidth,
-              border: 'none'
+              border: 'none',
+              height: '100vh',
+              display: 'flex',
+              flexDirection: 'column'
             },
           }}
         >
@@ -283,7 +278,10 @@ export default function Layout({ children }) {
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
               width: drawerWidth,
-              border: 'none'
+              border: 'none',
+              height: '100vh',
+              display: 'flex',
+              flexDirection: 'column'
             },
           }}
           open

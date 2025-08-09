@@ -7,6 +7,8 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import TextFieldController from '../../components/forms/TextFieldController';
 import DatePickerController from '../../components/forms/DatePickerController';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const schema = yup.object().shape({
   amount: yup.number().typeError('Amount is required').positive('Must be positive').required('Amount is required'),
@@ -25,8 +27,19 @@ export default function PaymentForm({ initialValues, onSubmit, onCancel, submitt
     reset(initialValues || { amount: '', date: '', payer: '', description: '' });
   }, [initialValues, reset]);
 
+  const onError = (formErrors) => {
+    const items = Object.values(formErrors).map((e) => e.message).filter(Boolean);
+    if (items.length) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Please fix validation errors',
+        html: `<ul style="text-align:left;margin:0;padding-left:18px;">${items.map((m) => `<li>${m}</li>`).join('')}</ul>`,
+      });
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit, onError)}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <TextFieldController name="amount" control={control} label="Amount" type="number" />

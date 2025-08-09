@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
 import { useSnackbar } from 'notistack';
-import { dashboardService } from '../services/dashboardService';
+import { getOverview } from '../services/dashboardService';
 import { paymentService } from '../services/paymentService';
 import SummaryCard from '../components/cards/SummaryCard';
 import AreaChartCard from '../components/charts/AreaChartCard';
@@ -25,7 +25,7 @@ export default function Dashboard() {
     const loadData = async () => {
       try {
         const [overview, payments] = await Promise.all([
-          dashboardService.getOverview(),
+          getOverview(),
           paymentService.getAll(),
         ]);
         

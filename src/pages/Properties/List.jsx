@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import { useSnackbar } from 'notistack';
 import { propertyService } from '../../services/propertyService';
-import PropertyForm from './Form';
+import PropertyForm from './Form.jsx';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { formatCurrency } from '../../utils/formatters';
 import SummaryCard from '../../components/cards/SummaryCard';

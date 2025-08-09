@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import { useSnackbar } from 'notistack';
 import { paymentService } from '../../services/paymentService';
-import PaymentForm from './Form';
+import PaymentForm from './Form.jsx';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 

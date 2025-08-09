@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import { useSnackbar } from 'notistack';
 import { debtService } from '../../services/debtService';
-import DebtForm from './Form';
+import DebtForm from './Form.jsx';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import PieChartCard from '../../components/charts/PieChartCard';
